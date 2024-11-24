@@ -15,7 +15,7 @@ const Card = ({
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${address}&appid=e9db67ddb0ef621cb69465985c50fce2`,
+        `https://api.openweathermap.org/data/2.5/weather?q=${address}&appid=${process.env.API_KEY}`,
         {
           method: "GET",
         }
