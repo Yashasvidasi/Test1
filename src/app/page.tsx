@@ -1,6 +1,7 @@
 "use client";
-import Card from "@/component/Card";
-import { Input } from "postcss";
+import Card from "@/components/Card";
+import Form from "@/components/Form";
+import PersonList from "@/components/PersonList";
 import { useState } from "react";
 
 export default function Home() {
@@ -8,104 +9,54 @@ export default function Home() {
   const [surname, setSurname] = useState<string>("");
   const [age, setAge] = useState<number>(0);
   const [address, setAddress] = useState<string>("");
-  const [List, setList] = useState<any[]>([]);
+  const [NameList, setNameList] = useState<any[]>([]);
   const [Index, setIndex] = useState(-1);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handlesave = () => {
-    const obj = {
-      name: name,
-      surname: surname,
-      age: age,
-      address: address,
-    };
+  const formList = [
+    { name: "Name", setter: setName },
+    { name: "Surname", setter: setSurname },
+    { name: "Age", setter: setAge },
+    { name: "Address", setter: setAddress },
+  ];
 
-    setList([...List, obj]);
+  const handleSave = () => {
+    if (!name || !surname || !age || !address) {
+      setErrorMsg("Please Fill in all Values");
+      return;
+    }
+    try {
+      const obj = {
+        name: name,
+        surname: surname,
+        age: age,
+        address: address,
+      };
+
+      setNameList([...NameList, obj]);
+      setErrorMsg("Success");
+    } catch (error) {
+      setErrorMsg("Something Went wrong");
+      return;
+    }
   };
 
   return (
-    <div className="w-screen h-screen bg-slate-800 flex flex-row justify-evenly p-10 overflow-hidden">
-      <div className="flex flex-col w-1/2">
-        <div className="mb-2 mt-5 flex flex-col">
-          <label className="mb-2">Name</label>
-          <input
-            className="text-black p-1 w-1/2"
-            type="text"
-            id="fname"
-            placeholder="first name"
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-          />
-        </div>
-
-        <div className="mb-2 mt-5 flex flex-col">
-          <label className="mb-2">surname</label>
-          <input
-            className="text-black p-1 w-1/2"
-            type="text"
-            id="sname"
-            placeholder="surname"
-            onChange={(e) => {
-              setSurname(e.target.value);
-            }}
-          />
-        </div>
-
-        <div className="mb-2 mt-5 flex flex-col">
-          <label className="mb-2">age</label>
-          <input
-            className="text-black p-1 w-1/2"
-            type="number"
-            id="age"
-            placeholder="age"
-            onChange={(e) => {
-              setAge(parseInt(e.target.value));
-            }}
-          />
-        </div>
-
-        <div className="mb-2 mt-5 flex flex-col">
-          <label className="mb-2">City</label>
-          <input
-            className="text-black p-1 w-1/2"
-            type="text"
-            id="address"
-            placeholder="City"
-            onChange={(e) => {
-              setAddress(e.target.value);
-            }}
-          />
-        </div>
-
-        <button
-          className="p-1 border border-white w-1/2 mt-10"
-          onClick={handlesave}
-        >
-          Save
-        </button>
+    <div className="min-h-screen bg-slate-800 flex flex-col lg:flex-row justify-between p-10">
+      <div className="flex flex-col lg:w-1/4 w-full p-2 mb-10">
+        <Form list={formList} handleSave={handleSave} errorMsg={errorMsg} />
       </div>
-      <div className="w-1/2 border border-white flex flex-row">
+      <div className="lg:w-1/2 w-full gap-10 flex flex-row">
         <div className="w-1/2 border border-white overflow-auto">
-          {List.map((element, index) => {
-            return (
-              <div
-                className="border border-white m-2 w-32 min-w-fit p-2"
-                key={index}
-                onClick={() => {
-                  setIndex(index);
-                }}
-              >
-                {element.name}
-              </div>
-            );
-          })}
+          <PersonList List={NameList} setIndex={setIndex} />
         </div>
+
         <div className="w-1/2 ">
           {Index !== -1 ? (
             <Card
-              name={List[Index].name}
-              age={List[Index].age}
-              address={List[Index].address}
+              name={NameList[Index].name}
+              age={NameList[Index].age}
+              address={NameList[Index].address}
             />
           ) : null}
         </div>
